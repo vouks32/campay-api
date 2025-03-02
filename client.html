@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Tracking</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 400px;
+        }
+        #error{
+            max-height: 400px;
+            overflow-y: scroll;
+            padding: 5px;
+            border : solid 1px #0005
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="loc"></div>
+    <div id="map"></div>
+    <div id="error"></div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        const socket = io('https://chopex-location-backend.vercel.app:4001');
+        //const socket =  io('localhost:4001');
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('changeLocation', (data) => {
+            console.log('Received location:', data);
+            document.getElementById('error').innerHTML += '> location received : ' + data.toString();
+            addMarker(data.latitude, data.longitude);
+        });
+
+        var map = L.map('map').setView([0, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        function addMarker(lat, lng) {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            var marker = L.marker([lat, lng]).addTo(map);
+
+            map.setView([lat, lng], 13);
+        }
+
+        navigator.geolocation.watchPosition((position) => {
+            document.getElementById('loc').innerHTML = position.coords.latitude + ' - ' + position.coords.longitude;
+
+            try {
+                socket.emit('sendLocation', position.coords);
+                document.getElementById('error').innerHTML += '\n> location send to server: ' + position.coords.toString();
+
+            } catch (e) {
+                document.getElementById('error').innerHTML = e.toString();
+
+            }
+        })
+    </script>
+</body>
+
+</html>
