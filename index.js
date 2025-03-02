@@ -4,13 +4,11 @@ const express = require('express'); //Import the express dependency
 var cors = require('cors');
 const app = express();  //Instantiate an express app, the main work horse of this server
 const port = 7872;  //Save the port number where your server will be listening
- 
+ let x;
 app.use(cors({
   origin: '*'
 }));
 
-
-//get requests to the root ("/") will route here
 //Idiomatic expression in express to route and respond to a client request
 app.get('/api/getmoney', async (req, res) => {
 
