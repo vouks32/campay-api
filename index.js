@@ -17,7 +17,6 @@ app.use(cors({
 app.get('/api/getmoney', async (req, res) => {
 
   let request = req.query;
-  let response;
 
   console.log(request)
   if (!request["ext_ref"] || !request["number"]) {
@@ -34,23 +33,28 @@ app.get('/api/getmoney', async (req, res) => {
     "external_reference": request["ext_ref"]
   });
 
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
+  let prom = new Promise(function (resolve, reject) {
 
-  xhr.addEventListener("readystatechange", function () {
-    if (this.readyState === 4) {
-      console.log(this.responseText);
-      response = this.responseText;
-    }
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+        console.log(this.responseText);
+        resolve(this.responseText)
+      }
+    });
+
+    xhr.open("POST", "https://demo.campay.net/api/collect/");
+    xhr.setRequestHeader("Authorization", "Token 1d0845173b102b7ab33fa97b4067fc1839c30466");
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.send(data);
   });
 
-  xhr.open("POST", "https://demo.campay.net/api/collect/");
-  xhr.setRequestHeader("Authorization", "Token 1d0845173b102b7ab33fa97b4067fc1839c30466");
-  xhr.setRequestHeader("Content-Type", "application/json");
 
-  xhr.send(data);
 
-  return xhr.responseText;
+  return await prom;
 });
 
 /////// //get requests to the root ("/") will route here
