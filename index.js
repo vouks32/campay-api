@@ -20,7 +20,7 @@ app.get('/api/getmoney', async (req, res) => {
 
   console.log(request)
   if (!request["ext_ref"] || !request["number"]) {
-    res.send({ status: "error", error: "data incomplete" })
+    res.send({ status: "error", error: "data incomplete", request : request })
     console.log({ status: "error", error: "data incomplete" });
     return
   }
