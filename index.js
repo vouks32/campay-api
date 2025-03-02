@@ -6,9 +6,7 @@ const app = express();  //Instantiate an express app, the main work horse of thi
 const port = 7872;  //Save the port number where your server will be listening
 
 app.use(cors({
-  origin: function (origin, callback) { // allow requests with no origin  // (like mobile apps or curl requests)
-    return callback(null, true);
-  }
+  origin: '*'
 }));
 
 
