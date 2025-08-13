@@ -159,7 +159,7 @@ app.get("/api/webhook", async (req, res) => {
           email: userMail,
           updates: { 
             tiktokToken : {
-              Tresponse, 
+              ...Tresponse, 
               date: Math.round(Date.now() / 1000)
             } 
           }
@@ -167,13 +167,18 @@ app.get("/api/webhook", async (req, res) => {
       });
 
       let updatedUser = await updateResponse.json();
-      if(updatedUser.error)
+      if(updatedUser.error){
         console.log("error saving Token",updatedUser.error)
-        res.send("error saving Token",updatedUser.error.toString())
-      
+        res.redirect('/tiktokfail')
+      }else{
+        res.redirect('/tiktoksuccess')
+      }
+
+
+
       } else {
         console.log(Tresponse.error, Tresponse.error_description)
-         res.send(Tresponse.error.toString(), Tresponse.error_description.toString())
+        res.redirect('/tiktokfail')
         return
       }
 
@@ -182,9 +187,22 @@ app.get("/api/webhook", async (req, res) => {
     }
   } catch (error) {
     console.error('Erreur récupération du fiechier:', req.query, error);
-    res.status(500).json({ error: 'Échec récupération fichier', message : error });
+    res.redirect('/tiktokfail')
   }
 });
+
+
+
+/////// //get requests to the root ("/") will route here
+app.get("/tiktoksuccess", async (req, res) => {
+  res.sendFile('./tiktok-success.html');
+});
+app.get("/tiktokfail", async (req, res) => {
+  res.sendFile('./tiktok-failure.html');
+});
+
+
+
 
 /////// //get requests to the root ("/") will route here
 app.get('/yo', async (req, res) => {
@@ -195,6 +213,8 @@ app.get('/yo', async (req, res) => {
   res.send("yooooooo => " + fullUrl);
 
 });
+
+
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
   console.log(`Now listening on port ${port}`);
