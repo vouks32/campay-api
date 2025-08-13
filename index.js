@@ -108,7 +108,7 @@ app.get("/api/webhook", async (req, res) => {
     }
     console.log('')
     if (code) {
-      const tiktokAuthCode = { scopes, state }
+      const tiktokAuthCode = { code, scopes, state }
       const userMail = state.split('--')[1]
       console.log(code, state)
 
@@ -180,7 +180,7 @@ app.get("/api/webhook", async (req, res) => {
     }
   } catch (error) {
     console.error('Erreur récupération du fiechier:', req.query, error);
-    res.status(500).json({ error: 'Échec récupération fichier' });
+    res.status(500).json({ error: 'Échec récupération fichier', message : error });
   }
 });
 
