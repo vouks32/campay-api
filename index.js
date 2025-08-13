@@ -10,7 +10,7 @@ app.use(cors({
   allowedHeaders: "*",
   origin: function (origin, callback) { // allow requests with no origin  // (like mobile apps or curl requests)
         return callback(null, true);
-    }
+    },
   methods: ["GET", "POST"]
 }));
 
