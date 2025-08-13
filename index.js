@@ -4,6 +4,7 @@ const express = require('express'); //Import the express dependency
 var cors = require('cors');
 const app = express();  //Instantiate an express app, the main work horse of this server
 const port = 7872;  //Save the port number where your server will be listening
+const cookieParser = require('cookie-parser');
 
 app.use(cors({
   allowedHeaders: "*",
@@ -63,9 +64,21 @@ app.get('/api/checktransaction', async (req, res) => {
     console.log({ status: "error", error: "data incomplete" });
     return
   }
+  return;
+});
 
 
+/////// //get requests to the root ("/") will route here
+app.get('/setcookiezrok', async (req, res) => {
 
+  let {redirecturl, email} = req.query;
+  console.log(redirecturl, mail)
+  res.cookie('zrok_interstitial', 1, {
+            maxAge: 900000, // Cookie expires in 15 minutes (900000 milliseconds)
+            httpOnly: false, // Prevents client-side JavaScript from accessing the cookie
+        });
+  console.log("cookie set, redirecting...")
+    res.redirect(redirecturl+"?mail="+email);  
   return;
 });
 
