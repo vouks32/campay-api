@@ -73,11 +73,7 @@ app.get('/api/checktransaction', async (req, res) => {
 app.get('/', async (req, res) => {
   let {redirecturl, email} = req.query;
   console.log("===>",redirecturl, email)
-  res.cookie('zrok_interstitial', 1, {
-            maxAge: 900000, // Cookie expires in 15 minutes (900000 milliseconds)
-            httpOnly: false, // Prevents client-side JavaScript from accessing the cookie
-            Domain : ".zrok.io"
-        });
+  res.header('skip_zrok_interstitial', 1)
   console.log("cookie set, redirecting...")
     res.redirect(redirecturl+"?email="+email);  
   return;
