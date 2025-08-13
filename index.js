@@ -98,9 +98,10 @@ app.get("/api/auth", async (req, res) => {
 
 /////// //get requests to the root ("/") will route here
 app.get('/yo', async (req, res) => {
-  res.send("yooooooo");
   let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
   console.log( req.protocol, '://' + req.get('host'), req.originalUrl)
+  res.send("yooooooo => "+fullUrl);
+
 });
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
