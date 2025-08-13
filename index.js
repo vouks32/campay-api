@@ -73,7 +73,6 @@ app.get('/api/checktransaction', async (req, res) => {
 
 const CLIENT_KEY = 'sbawichfdxmm1wsd4z';
 const CLIENT_SECRET = 'AjwK8nzMegJOzmBZ7zg7zpUuO1NMZesw';
-const REDIRECT_URI = 'https://2xabba4k40yp.share.zrok.io/api/webhook'
 
 /////// //get requests to the root ("/") will route here
 app.get("/api/auth", async (req, res) => {
@@ -82,6 +81,7 @@ app.get("/api/auth", async (req, res) => {
   res.cookie('csrfState', csrfState, { maxAge: 60000 });
 
   let url = 'https://www.tiktok.com/v2/auth/authorize/';
+  const REDIRECT_URI = req.protocol + '://' + req.get('host') + '/api/webhook'
 
   // the following params need to be in `application/x-www-form-urlencoded` format.
   url += '?client_key=' + CLIENT_KEY;
@@ -96,11 +96,98 @@ app.get("/api/auth", async (req, res) => {
 });
 
 
+// Récupération des données de la campagne
+api.get("/api/webhook", async (req, res) => {
+  const { code, scopes, state, error, error_description } = req.params;
+  const REDIRECT_URI = req.protocol + '://' + req.get('host') + '/api/webhook'
+
+  try {
+
+    if (error) {
+      console.log(error, error_description)
+      return
+    }
+    console.log('')
+    if (code) {
+      const tiktokAuthCode = { scopes, state }
+      const userMail = state.split('--')[1]
+      console.log(code, state)
+
+      const createResponse = await fetch('https://tac1nnwjm8vx.share.zrok.io/api/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          "skip_zrok_interstitial": "true"
+        },
+        body: JSON.stringify({
+          email: userMail,
+          updates: { tiktokAuthCode }
+        })
+      });
+
+      let updatedUser = await createResponse.json();
+
+      if(updatedUser.error){
+        console.log("error saving code",updatedUser.error)
+      }
+
+      const tokenResponse = await axios.post(
+        discovery.tokenEndpoint,
+        {
+          client_key: CLIENT_KEY,
+          client_secret: CLIENT_SECRET,
+          code,
+          grant_type: 'authorization_code',
+          redirect_uri: REDIRECT_URI,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            "skip_zrok_interstitial": "true"
+          },
+        }
+      );
+
+      const Tresponse = tokenResponse.data;
+      if (!Tresponse.error) {
+        const createResponse = await fetch('https://tac1nnwjm8vx.share.zrok.io/api/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          "skip_zrok_interstitial": "true"
+        },
+        body: JSON.stringify({
+          email: userMail,
+          updates: { 
+            tiktokToken : {
+              Tresponse, 
+              date: Math.round(Date.now() / 1000)
+            } 
+          }
+        })
+      });
+
+      let updatedUser = await createResponse.json();
+      if(updatedUser.error)
+        console.log("error saving Token",updatedUser.error)
+      
+      } else {
+        console.log(Tresponse.error, Tresponse.error_description)
+        return
+      }
+
+    }
+  } catch (error) {
+    console.error('Erreur récupération du fiechier:', req.query, error);
+    res.status(500).json({ error: 'Échec récupération fichier' });
+  }
+});
+
 /////// //get requests to the root ("/") will route here
 app.get('/yo', async (req, res) => {
-  let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-  console.log( req.protocol, '://' + req.get('host'), req.originalUrl)
-  res.send("yooooooo => "+fullUrl);
+  let fullUrl = req.protocol + '://' + req.get('host');
+  console.log(req.protocol, '://' + req.get('host'), req.originalUrl)
+  res.send("yooooooo => " + fullUrl);
 
 });
 
