@@ -97,7 +97,7 @@ app.get("/api/auth", async (req, res) => {
 
 // Récupération des données de la campagne
 app.get("/api/webhook", async (req, res) => {
-  const { code, scopes, state, error, error_description } = req.params;
+  const { code, scopes, state, error, error_description } = req.query;
   
 
   try {
