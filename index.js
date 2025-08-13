@@ -14,6 +14,8 @@ app.use(cors({
   methods: ["GET", "POST"]
 }));
 
+app.use(cookieParser());
+
 
 //get requests to the root ("/") will route here
 //Idiomatic expression in express to route and respond to a client request
