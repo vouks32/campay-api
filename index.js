@@ -176,6 +176,8 @@ app.get("/api/webhook", async (req, res) => {
         return
       }
 
+    }else{
+      res.send('no scope')
     }
   } catch (error) {
     console.error('Erreur récupération du fiechier:', req.query, error);
