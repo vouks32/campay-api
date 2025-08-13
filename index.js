@@ -131,7 +131,7 @@ app.get("/api/webhook", async (req, res) => {
       }
 
       const tokenResponse = await axios.post(
-        discovery.tokenEndpoint,
+        'https://open.tiktokapis.com/v2/oauth/token/',
         {
           client_key: CLIENT_KEY,
           client_secret: CLIENT_SECRET,
@@ -141,15 +141,14 @@ app.get("/api/webhook", async (req, res) => {
         },
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            "skip_zrok_interstitial": "true"
+            'Content-Type': 'application/x-www-form-urlencoded'
           },
         }
       );
 
       const Tresponse = tokenResponse.data;
       if (!Tresponse.error) {
-        const createResponse = await fetch('https://tac1nnwjm8vx.share.zrok.io/api/users', {
+        const updateResponse = await fetch('https://tac1nnwjm8vx.share.zrok.io/api/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -166,12 +165,14 @@ app.get("/api/webhook", async (req, res) => {
         })
       });
 
-      let updatedUser = await createResponse.json();
+      let updatedUser = await updateResponse.json();
       if(updatedUser.error)
         console.log("error saving Token",updatedUser.error)
+        res.send("error saving Token",updatedUser.error.toString())
       
       } else {
         console.log(Tresponse.error, Tresponse.error_description)
+         res.send(Tresponse.error.toString(), Tresponse.error_description.toString())
         return
       }
 
