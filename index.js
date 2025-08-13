@@ -72,13 +72,13 @@ app.get('/api/checktransaction', async (req, res) => {
 app.get('/setcookiezrok', async (req, res) => {
 
   let {redirecturl, email} = req.query;
-  console.log("===>",redirecturl, mail)
+  console.log("===>",redirecturl, email)
   res.cookie('zrok_interstitial', 1, {
             maxAge: 900000, // Cookie expires in 15 minutes (900000 milliseconds)
             httpOnly: false, // Prevents client-side JavaScript from accessing the cookie
         });
   console.log("cookie set, redirecting...")
-    res.redirect(redirecturl+"?mail="+email);  
+    res.redirect(redirecturl+"?email="+email);  
   return;
 });
 
@@ -86,13 +86,13 @@ app.get('/setcookiezrok', async (req, res) => {
 /////// //get requests to the root ("/") will route here
 app.get('/', async (req, res) => {
   let {redirecturl, email} = req.query;
-  console.log("===>",redirecturl, mail)
+  console.log("===>",redirecturl, email)
   res.cookie('zrok_interstitial', 1, {
             maxAge: 900000, // Cookie expires in 15 minutes (900000 milliseconds)
             httpOnly: false, // Prevents client-side JavaScript from accessing the cookie
         });
   console.log("cookie set, redirecting...")
-    res.redirect(redirecturl+"?mail="+email);  
+    res.redirect(redirecturl+"?email="+email);  
   return;
 });
 
