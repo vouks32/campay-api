@@ -6,6 +6,7 @@ const app = express();  //Instantiate an express app, the main work horse of thi
 const port = 7872;  //Save the port number where your server will be listening
 const cookieParser = require('cookie-parser');
 const axios = require('axios');
+const path = require('path');
 
 app.use(cors({
   allowedHeaders: "*",
@@ -195,10 +196,20 @@ app.get("/api/webhook", async (req, res) => {
 
 /////// //get requests to the root ("/") will route here
 app.get("/tiktoksuccess", async (req, res) => {
-  res.sendFile('./tiktok-success.html');
+  const options = {
+        root: path.join(__dirname)
+    };
+
+    const fileName = 'tiktok-success.html';
+    res.sendFile(fileName, options)
 });
 app.get("/tiktokfail", async (req, res) => {
-  res.sendFile('./tiktok-failure.html');
+  const options = {
+        root: path.join(__dirname)
+    };
+
+    const fileName = 'tiktok-failure.html';
+    res.sendFile(fileName, options)
 });
 
 
