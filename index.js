@@ -92,7 +92,7 @@ app.get('/', async (req, res) => {
 /////// //get requests to the root ("/") will route here
 app.get('/yo', async (req, res) => {
 
-  res.send("yooooooo"));
+  res.send("yooooooo");
 });
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
