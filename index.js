@@ -73,7 +73,7 @@ app.get('/api/checktransaction', async (req, res) => {
 
 const CLIENT_KEY = 'sbawichfdxmm1wsd4z';
 const CLIENT_SECRET = 'AjwK8nzMegJOzmBZ7zg7zpUuO1NMZesw';
-
+const REDIRECT_URI = 'https://campay-api.vercel.app/api/webhook'
 /////// //get requests to the root ("/") will route here
 app.get("/api/auth", async (req, res) => {
   const { email } = req.query
@@ -81,7 +81,6 @@ app.get("/api/auth", async (req, res) => {
   res.cookie('csrfState', csrfState, { maxAge: 60000 });
 
   let url = 'https://www.tiktok.com/v2/auth/authorize/';
-  const REDIRECT_URI = req.protocol + '://' + req.get('host') + '/api/webhook'
 
   // the following params need to be in `application/x-www-form-urlencoded` format.
   url += '?client_key=' + CLIENT_KEY;
@@ -99,7 +98,7 @@ app.get("/api/auth", async (req, res) => {
 // Récupération des données de la campagne
 app.get("/api/webhook", async (req, res) => {
   const { code, scopes, state, error, error_description } = req.params;
-  const REDIRECT_URI = 'https://campay-api.vercel.app/api/webhook'
+  
 
   try {
 
