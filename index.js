@@ -69,8 +69,14 @@ app.get('/api/checktransaction', async (req, res) => {
   return;
 });
 
+
+
+const CLIENT_KEY = 'sbawichfdxmm1wsd4z';
+const CLIENT_SECRET = 'AjwK8nzMegJOzmBZ7zg7zpUuO1NMZesw';
+const REDIRECT_URI = 'https://2xabba4k40yp.share.zrok.io/api/webhook'
+
 /////// //get requests to the root ("/") will route here
-app.get('/', async (req, res) => {
+app.get("/api/auth", async (req, res) => {
   const { email } = req.query
   const csrfState = Math.random().toString(36).substring(2);
   res.cookie('csrfState', csrfState, { maxAge: 60000 });
@@ -86,13 +92,15 @@ app.get('/', async (req, res) => {
 
   console.log("redirecting to", url)
   res.redirect(url);
+
 });
 
 
 /////// //get requests to the root ("/") will route here
 app.get('/yo', async (req, res) => {
-
   res.send("yooooooo");
+  let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  console.log( req.protocol, '://' + req.get('host'), req.originalUrl)
 });
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
