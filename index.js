@@ -9,8 +9,8 @@ const cookieParser = require('cookie-parser');
 app.use(cors({
   allowedHeaders: "*",
   origin: function (origin, callback) { // allow requests with no origin  // (like mobile apps or curl requests)
-        return callback(null, true);
-    },
+    return callback(null, true);
+  },
   methods: ["GET", "POST"]
 }));
 
@@ -25,7 +25,7 @@ app.get('/api/getmoney', async (req, res) => {
 
   console.log(request)
   if (!request["ext_ref"] || !request["number"]) {
-    res.send({ status: "error", error: "data incomplete", request : request })
+    res.send({ status: "error", error: "data incomplete", request: request })
     console.log({ status: "error", error: "data incomplete" });
     return
   }
@@ -71,12 +71,28 @@ app.get('/api/checktransaction', async (req, res) => {
 
 /////// //get requests to the root ("/") will route here
 app.get('/', async (req, res) => {
-  let {redirecturl, email} = req.query;
-  console.log("===>",redirecturl, email)
-  res.header('skip_zrok_interstitial', 1)
-  console.log("cookie set, redirecting...")
-    res.redirect(redirecturl+"?email="+email);  
-  return;
+  const { email } = req.query
+  const csrfState = Math.random().toString(36).substring(2);
+  res.cookie('csrfState', csrfState, { maxAge: 60000 });
+
+  let url = 'https://www.tiktok.com/v2/auth/authorize/';
+
+  // the following params need to be in `application/x-www-form-urlencoded` format.
+  url += '?client_key=' + CLIENT_KEY;
+  url += '&scope=user.info.basic,video.list,user.info.profile,user.info.stats';
+  url += '&response_type=code';
+  url += '&redirect_uri=' + REDIRECT_URI;
+  url += '&state=' + csrfState + "--" + email;
+
+  console.log("redirecting to", url)
+  res.redirect(url);
+});
+
+
+/////// //get requests to the root ("/") will route here
+app.get('/yo', async (req, res) => {
+
+  res.send("yooooooo"));
 });
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
