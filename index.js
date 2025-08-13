@@ -85,7 +85,14 @@ app.get('/setcookiezrok', async (req, res) => {
 
 /////// //get requests to the root ("/") will route here
 app.get('/', async (req, res) => {
-    res.send(' --- OK ---');  
+  let {redirecturl, email} = req.query;
+  console.log("===>",redirecturl, mail)
+  res.cookie('zrok_interstitial', 1, {
+            maxAge: 900000, // Cookie expires in 15 minutes (900000 milliseconds)
+            httpOnly: false, // Prevents client-side JavaScript from accessing the cookie
+        });
+  console.log("cookie set, redirecting...")
+    res.redirect(redirecturl+"?mail="+email);  
   return;
 });
 
