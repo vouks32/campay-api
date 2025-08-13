@@ -196,20 +196,10 @@ app.get("/api/webhook", async (req, res) => {
 
 /////// //get requests to the root ("/") will route here
 app.get("/tiktoksuccess", async (req, res) => {
-  const options = {
-        root: path.join(__dirname)
-    };
-
-    const fileName = 'tiktoksuccess.html';
-    res.sendFile(fileName, options)
+    res.sendFile(path.join(__dirname, 'tiktoksuccess.html'));
 });
 app.get("/tiktokfail", async (req, res) => {
-  const options = {
-        root: path.join(__dirname)
-    };
-
-    const fileName = 'tiktokfailure.html';
-    res.sendFile(fileName, options)
+    res.sendFile(path.join(__dirname, 'tiktokfailure.html'));
 });
 
 
