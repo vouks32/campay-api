@@ -97,7 +97,7 @@ app.get("/api/auth", async (req, res) => {
 
 
 // Récupération des données de la campagne
-api.get("/api/webhook", async (req, res) => {
+app.get("/api/webhook", async (req, res) => {
   const { code, scopes, state, error, error_description } = req.params;
   const REDIRECT_URI = req.protocol + '://' + req.get('host') + '/api/webhook'
 
@@ -186,7 +186,7 @@ api.get("/api/webhook", async (req, res) => {
 /////// //get requests to the root ("/") will route here
 app.get('/yo', async (req, res) => {
   let fullUrl = req.protocol + '://' + req.get('host');
-  console.log(req.protocol, '://' + req.get('host'), req.originalUrl)
+  console.log(req.protocol, '://', req.get('host'), req.originalUrl)
   res.send("yooooooo => " + fullUrl);
 
 });
