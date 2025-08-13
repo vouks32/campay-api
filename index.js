@@ -191,6 +191,8 @@ app.get('/yo', async (req, res) => {
   let fullUrl = req.protocol + '://' + req.get('host');
   console.log(req.protocol, '://', req.get('host'), req.originalUrl)
   res.send("yooooooo => " + fullUrl);
+  res.send("yooooooo => " + fullUrl);
+  res.send("yooooooo => " + fullUrl);
 
 });
 
