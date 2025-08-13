@@ -99,7 +99,7 @@ app.get("/api/auth", async (req, res) => {
 // Récupération des données de la campagne
 app.get("/api/webhook", async (req, res) => {
   const { code, scopes, state, error, error_description } = req.params;
-  const REDIRECT_URI = req.protocol + '://' + req.get('host') + '/api/webhook'
+  const REDIRECT_URI = 'https://campay-api.vercel.app/api/webhook'
 
   try {
 
