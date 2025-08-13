@@ -1,35 +1,23 @@
-{   
-    "headers": [
+{
+  "version": 2,
+  "builds": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
-      ]
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "query",
-          "key": "authorized"
-        }
-      ],
-      "headers": [
-        {
-          "key": "x-authorized",
-          "value": "true"
-        }
-      ]
+      "src": "*.js",
+      "use": "@vercel/node"
     }
   ],
-    "version": 2,
-    "builds": [
-      { "src": "*.js", "use": "@vercel/node" }
-    ],
-    "regions": [
-        "sfo1"
-    ]
+  "regions": [
+    "sfo1"
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      },
+      "dest": "/index.js"
+    }
+  ]
 }
