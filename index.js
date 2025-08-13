@@ -200,7 +200,7 @@ app.get("/tiktoksuccess", async (req, res) => {
         root: path.join(__dirname)
     };
 
-    const fileName = 'tiktok-success.html';
+    const fileName = 'tiktoksuccess.html';
     res.sendFile(fileName, options)
 });
 app.get("/tiktokfail", async (req, res) => {
@@ -208,7 +208,7 @@ app.get("/tiktokfail", async (req, res) => {
         root: path.join(__dirname)
     };
 
-    const fileName = 'tiktok-failure.html';
+    const fileName = 'tiktokfailure.html';
     res.sendFile(fileName, options)
 });
 
