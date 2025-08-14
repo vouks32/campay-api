@@ -114,7 +114,7 @@ app.get("/api/webhook", async (req, res) => {
       const userMail = state.split('--')[1]
       console.log(code, state)
 
-      const createResponse = await fetch('https://tac1nnwjm8vx.share.zrok.io/api/users', {
+      const createResponse = await fetch('http://16.170.236.54/api/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ app.get("/api/webhook", async (req, res) => {
 
       const Tresponse = tokenResponse.data;
       if (!Tresponse.error) {
-        const updateResponse = await fetch('https://tac1nnwjm8vx.share.zrok.io/api/users', {
+        const updateResponse = await fetch('http://16.170.236.54/api/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
