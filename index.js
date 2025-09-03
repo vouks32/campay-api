@@ -76,6 +76,9 @@ app.get('/api/checktransaction', async (req, res) => {
 const CLIENT_KEY = 'sbawichfdxmm1wsd4z';
 const CLIENT_SECRET = 'AjwK8nzMegJOzmBZ7zg7zpUuO1NMZesw';
 const REDIRECT_URI = 'https://campay-api.vercel.app/api/webhook'
+
+const dbServer = 'https://zvg5idmip4f1.share.zrok.io'
+
 /////// //get requests to the root ("/") will route here
 app.get("/api/auth", async (req, res) => {
   const { email } = req.query
@@ -100,7 +103,7 @@ app.get("/api/auth", async (req, res) => {
 // Récupération des données de la campagne
 app.get("/api/webhook", async (req, res) => {
   const { code, scopes, state, error, error_description } = req.query;
-  
+
 
   try {
 
@@ -114,7 +117,7 @@ app.get("/api/webhook", async (req, res) => {
       const userMail = state.split('--')[1]
       console.log(code, state)
 
-      const createResponse = await fetch('http://16.170.236.54/api/users', {
+      const createResponse = await fetch(dbServer + '/api/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -128,8 +131,8 @@ app.get("/api/webhook", async (req, res) => {
 
       let updatedUser = await createResponse.json();
 
-      if(updatedUser.error){
-        console.log("error saving code",updatedUser.error)
+      if (updatedUser.error) {
+        console.log("error saving code", updatedUser.error)
       }
 
       const tokenResponse = await axios.post(
@@ -150,30 +153,30 @@ app.get("/api/webhook", async (req, res) => {
 
       const Tresponse = tokenResponse.data;
       if (!Tresponse.error) {
-        const updateResponse = await fetch('http://16.170.236.54/api/users', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          "skip_zrok_interstitial": "true"
-        },
-        body: JSON.stringify({
-          email: userMail,
-          updates: { 
-            tiktokToken : {
-              ...Tresponse, 
-              date: Math.round(Date.now() / 1000)
-            } 
-          }
-        })
-      });
+        const updateResponse = await fetch(dbServer + '/api/users', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            "skip_zrok_interstitial": "true"
+          },
+          body: JSON.stringify({
+            email: userMail,
+            updates: {
+              tiktokToken: {
+                ...Tresponse,
+                date: Math.round(Date.now() / 1000)
+              }
+            }
+          })
+        });
 
-      let updatedUser = await updateResponse.json();
-      if(updatedUser.error){
-        console.log("error saving Token",updatedUser.error)
-        res.redirect('/tiktokfail')
-      }else{
-        res.redirect('/tiktoksuccess')
-      }
+        let updatedUser = await updateResponse.json();
+        if (updatedUser.error) {
+          console.log("error saving Token", updatedUser.error)
+          res.redirect('/tiktokfail')
+        } else {
+          res.redirect('/tiktoksuccess')
+        }
 
 
 
@@ -183,7 +186,7 @@ app.get("/api/webhook", async (req, res) => {
         return
       }
 
-    }else{
+    } else {
       res.send('no scope')
     }
   } catch (error) {
@@ -196,10 +199,10 @@ app.get("/api/webhook", async (req, res) => {
 
 /////// //get requests to the root ("/") will route here
 app.get("/tiktoksuccess", async (req, res) => {
-    res.sendFile(path.join(__dirname, 'tiktoksuccess.html'));
+  res.sendFile(path.join(__dirname, 'tiktoksuccess.html'));
 });
 app.get("/tiktokfail", async (req, res) => {
-    res.sendFile(path.join(__dirname, 'tiktokfailure.html'));
+  res.sendFile(path.join(__dirname, 'tiktokfailure.html'));
 });
 
 
