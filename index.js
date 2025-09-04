@@ -77,7 +77,8 @@ const CLIENT_KEY = 'sbawichfdxmm1wsd4z';
 const CLIENT_SECRET = 'AjwK8nzMegJOzmBZ7zg7zpUuO1NMZesw';
 const REDIRECT_URI = 'https://campay-api.vercel.app/api/webhook'
 
-const dbServer = 'https://zvg5idmip4f1.share.zrok.io'
+//const dbServer = 'https://zvg5idmip4f1.share.zrok.io'
+const dbServer = 'http://16.170.236.54'
 
 /////// //get requests to the root ("/") will route here
 app.get("/api/auth", async (req, res) => {
@@ -104,16 +105,15 @@ app.get("/api/auth", async (req, res) => {
 app.get("/api/webhook", async (req, res) => {
   const { code, scopes, state, error, error_description } = req.query;
 
-
   try {
-
     if (error) {
       console.log(error, error_description)
+      res.redirect('/tiktokfail')
       return
     }
     console.log('')
     if (code) {
-      const tiktokAuthCode = { code, scopes, state }
+      const tiktokAuthCode = { code, scopes, state, date: Math.round(Date.now() / 1000) }
       const userMail = state.split('--')[1]
       console.log(code, state)
 
@@ -164,7 +164,8 @@ app.get("/api/webhook", async (req, res) => {
             updates: {
               tiktokToken: {
                 ...Tresponse,
-                date: Math.round(Date.now() / 1000)
+                access_token_date: Math.round(Date.now() / 1000),
+                refresh_token_date: Math.round(Date.now() / 1000)
               }
             }
           })
@@ -177,9 +178,6 @@ app.get("/api/webhook", async (req, res) => {
         } else {
           res.redirect('/tiktoksuccess')
         }
-
-
-
       } else {
         console.log(Tresponse.error, Tresponse.error_description)
         res.redirect('/tiktokfail')
@@ -187,11 +185,73 @@ app.get("/api/webhook", async (req, res) => {
       }
 
     } else {
-      res.send('no scope')
+      res.redirect('/tiktokfail')
     }
   } catch (error) {
     console.error('Erreur récupération du fiechier:', req.query, error);
     res.redirect('/tiktokfail')
+  }
+});
+
+// Récupération des données de la campagne
+app.get("/api/refresh_token", async (req, res) => {
+  const { refresh_token, email } = req.query;
+
+  try {
+
+    if (refresh_token) {
+      const tokenResponse = await axios.post(
+        'https://open.tiktokapis.com/v2/oauth/token/',
+        {
+          client_key: CLIENT_KEY,
+          client_secret: CLIENT_SECRET,
+          grant_type: 'refresh_token',
+          refresh_token
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+        }
+      );
+
+      const Tresponse = tokenResponse.data;
+      if (!Tresponse.error) {
+        const updateResponse = await fetch(dbServer + '/api/users', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            "skip_zrok_interstitial": "true"
+          },
+          body: JSON.stringify({
+            email: email,
+            updates: {
+              tiktokToken: {
+                ...Tresponse,
+                access_token_date: Math.round(Date.now() / 1000)
+              }
+            }
+          })
+        });
+
+        let updatedUser = await updateResponse.json();
+        if (updatedUser.error) {
+          console.log("error saving Token", updatedUser.error)
+          res.status(500).json({ success: false })
+        } else {
+          res.status(201).json(updatedUser);
+        }
+      } else {
+        console.log(Tresponse.error, Tresponse.error_description)
+        res.status(500).json({ success: false })
+        return
+      }
+    } else {
+      res.status(500).json({ success: false })
+    }
+  } catch (error) {
+    //console.error('Erreur récupération du fiechier:', req.query, error);
+    res.status(500).json({ success: false })
   }
 });
 
